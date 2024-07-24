@@ -6,4 +6,5 @@ use App\Http\Controllers\UsersController;
 
 Route::group(['middleware' => ['errorHandler']], function () {
     Route::post('register', [UsersController::class, 'registerUser']);
+    Route::post('login', [UsersController::class, 'loginUser']);
 });

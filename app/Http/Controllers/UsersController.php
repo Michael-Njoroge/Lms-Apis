@@ -39,4 +39,39 @@ class UsersController extends Controller
         ]);
         
     }
+
+    public function loginUser(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email|exists:users,email',
+            'password' => 'required|string'
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+
+        if (!$user && Hash::check($data['password'], $user->getAuthPassword())) {
+            return $this->sendError($error = "Invalid Credentials");
+        }
+
+        $token = $user->createToken("access_token")->plainTextToken;
+
+
+         return response()->json([
+            'success' => true,
+            'data' => 
+            [
+                'id' => $user->id,
+                'firstname' => $user->firstname,
+                'lastname' => $user->lastname,
+                'token' => $token,
+                'email' => $user->email,
+                'mobile' => $user->mobile,
+                'role' => $user->role,
+                'username' => strtolower($user->firstname . $user->lastname),
+                'profile' => $user->user_image,
+            ],
+            'message' => 'Logged in successfully',
+        ]);
+
+    }
 }

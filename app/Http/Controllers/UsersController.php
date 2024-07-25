@@ -8,6 +8,8 @@ use App\Http\Resources\UsersResource;
 use App\Mail\ResetPassword;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
+use App\Models\PasswordReset;
+use Carbon\Carbon;
 
 class UsersController extends Controller
 {
@@ -148,5 +150,39 @@ class UsersController extends Controller
 
         return $this->sendResponse([], "Please check your mail, we have sent a password reset link valid for the next 10 minutes" );
     }
+
+    public function resetPassword(Request $request)
+    {
+        try {
+            $data = $request->validate([
+                'email' => 'required|email',
+                'token' => 'required',
+                'password' => 'required|confirmed'
+            ]);
+
+            $passwordReset = PasswordReset::where('email', $data['email'])->first();
+
+            if ($passwordReset && Hash::check($data['token'], $passwordReset->token)) {
+                $createdAt = new Carbon($passwordReset->created_at);
+
+                if ($createdAt->addMinutes(10) >= now()) {
+                    $user = User::where('email', $data['email'])->first();
+                    $user->password = Hash::make($data['password']);
+                    $user->save();
+
+                    // Delete the token after successful password reset
+                    $passwordReset->delete();
+
+                    return $this->sendResponse([], "Password reset successfully, please use the new password in your next login");
+                } else {
+                    return $this->sendError("The reset token is invalid or has expired, please try again");
+                }
+            } else {
+                return $this->sendError("The reset token is invalid or has expired, please try again");
+            }
+        } catch (Exception $error) {
+            return $this->sendError($error->getMessage(), 500);
+        }
+        }
 }
    

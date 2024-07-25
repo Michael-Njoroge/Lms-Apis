@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UsersResource;
+use App\Mail\ResetPassword;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 
 class UsersController extends Controller
@@ -43,7 +45,7 @@ class UsersController extends Controller
         $user = User::where('email', $data['email'])->first();
 
         if (!$user && Hash::check($data['password'], $user->password)) {
-            return $this->sendError($error = "Invalid Credentials");
+            return $this->sendError("Invalid Credentials");
         }
 
         $token = $user->createToken("access_token")->plainTextToken;
@@ -117,16 +119,34 @@ class UsersController extends Controller
 
         $user = auth()->user();
         if(!Hash::check($data['currentPassword'], $user->password)){
-            return $this->sendError($error = 'Your current password is incorrect');
+            return $this->sendError('Your current password is incorrect');
+        }
+        if(Hash::check($data['password'], $user->password)){
+            return $this->sendError('The new password cannot be the same as the current password.');
         }
 
         $rawPassword = $data['password'];
-        $data['password'] = Hash::make($rawPassword);
+        $user->password = Hash::make($rawPassword);
+        $user->save();
 
         return $this->sendResponse(UsersResource::make($user)
             ->response()
             ->getData(true),'Password updated successfully');
         
+    }
+
+    public function forgotPassword(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email|exists:users,email'
+        ]);
+
+        $user = User::where('email', $data['email'])->first();
+        $token = $user->createResetPasswordToken();
+        $resetUrl = env('BASE_URL') . '/reset-password?email='.$user->email.'&token='.$token;
+         Mail::to($user->email)->send(new ResetPassword($user,$resetUrl));
+
+        return $this->sendResponse([], "Please check your mail, we have sent a password reset link valid for the next 10 minutes" );
     }
 }
    

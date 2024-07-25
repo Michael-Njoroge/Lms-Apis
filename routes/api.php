@@ -9,6 +9,7 @@ Route::post('login', [UsersController::class, 'loginUser']);
 
 Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::get('users/{user}', [UsersController::class, 'getUser']);
+    Route::put('users/update/password', [UsersController::class, 'updatePassword']);
 }); 
 
 Route::middleware(['auth:sanctum','admin','active'])->group(function(){

@@ -107,5 +107,26 @@ class UsersController extends Controller
             ->response()
             ->getData(true), $message);
     }
+
+    public function updatePassword(Request $request)
+    {
+        $data = $request->validate([
+            'currentPassword' => 'required|string',
+            'password' => 'required|confirmed|string|min:6',
+        ]);
+
+        $user = auth()->user();
+        if(!Hash::check($data['currentPassword'], $user->password)){
+            return $this->sendError($error = 'Your current password is incorrect');
+        }
+
+        $rawPassword = $data['password'];
+        $data['password'] = Hash::make($rawPassword);
+
+        return $this->sendResponse(UsersResource::make($user)
+            ->response()
+            ->getData(true),'Password updated successfully');
+        
+    }
 }
    

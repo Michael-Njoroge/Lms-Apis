@@ -47,7 +47,7 @@ class GoogleController extends Controller
                 ]
             );
 
-            $user->createToken('Personal Access Token')->accessToken;
+            $user->createToken('access_token')->accessToken;
 
             return $this->sendResponse(UsersResource::make($user)
                     ->response()

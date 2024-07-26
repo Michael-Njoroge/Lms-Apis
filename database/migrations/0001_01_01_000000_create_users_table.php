@@ -20,9 +20,9 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
-            $table->string('mobile')->unique();
+            $table->string('mobile')->nullable()->unique();
             $table->string('role')->default('user');
-            $table->string('profession');
+            $table->string('profession')->nullable();
             $table->boolean('is_blocked')->default(false);
             $table->timestamps();
         });

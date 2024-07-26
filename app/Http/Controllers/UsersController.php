@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use Carbon\Carbon;
+use Exception;
 
 class UsersController extends Controller
 {

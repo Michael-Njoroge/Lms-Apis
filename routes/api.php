@@ -3,11 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\GoogleController;
 
 Route::post('register', [UsersController::class, 'registerUser']);
 Route::post('login', [UsersController::class, 'loginUser']);
 Route::post('forgot-password', [UsersController::class, 'forgotPassword']);
 Route::post('reset-password', [UsersController::class, 'resetPassword']);
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::get('users/{user}', [UsersController::class, 'getUser']);

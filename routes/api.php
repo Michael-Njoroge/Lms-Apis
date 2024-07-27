@@ -7,6 +7,7 @@ use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\TutCategoryController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\NewsLetterController;
+use App\Http\Controllers\ReviewsController;
 
 Route::post('register', [UsersController::class, 'registerUser']);
 Route::post('login', [UsersController::class, 'loginUser']);
@@ -19,6 +20,8 @@ Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallba
 Route::post('news-letter', [NewsLetterController::class, 'subscribe']);
 Route::delete('news-letter/{news_letter}', [NewsLetterController::class, 'unsubscribe']);
 
+Route::get('reviews', [ReviewsController::class, 'getReviews']);
+
 Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::get('users/{user}', [UsersController::class, 'getUser']);
     Route::put('users/update/password', [UsersController::class, 'updatePassword']);
@@ -27,6 +30,8 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
 
     Route::get('tutorials', [TutorialController::class, 'getAllTutorials']);
     Route::get('/tutorials/{slug}/{type}', [TutorialController::class, 'getATutorial']);
+
+    Route::post('reviews', [ReviewsController::class, 'createReview']);
 }); 
 
 Route::middleware(['auth:sanctum','admin','active'])->group(function(){
@@ -43,4 +48,9 @@ Route::middleware(['auth:sanctum','admin','active'])->group(function(){
     Route::get('tutorial/category/{tutorial}', [TutCategoryController::class, 'getATutCategory']);
     Route::put('tutorial/category/{tutorial}', [TutCategoryController::class, 'updateTutCategory']);
     Route::delete('tutorial/category/{tutorial}', [TutCategoryController::class, 'deleteTutCategory']);
+
+    Route::get('reviews/{review}', [ReviewsController::class, 'getAReview']);
+    Route::put('reviews/{review}', [ReviewsController::class, 'updateReview']);
+    Route::delete('reviews/{review}', [ReviewsController::class, 'deleteReview']);
+
 });

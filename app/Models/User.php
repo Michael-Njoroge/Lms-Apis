@@ -47,6 +47,11 @@ class User extends Authenticatable
         ];
     }
 
+    public function reviews()
+    {
+        return $this->hasMany(Reviews::class);
+    }
+
     public function createResetPasswordToken()
     {
         $resetToken = Str::random(32);

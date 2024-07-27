@@ -23,7 +23,8 @@ return new class extends Migration
 
         Schema::create('blog_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('title');
+            $table->string('title')->unique();
+            $table->string('slug')->unique();
             $table->timestamps();
         });
 
@@ -33,7 +34,8 @@ return new class extends Migration
 
         Schema::create('document_categories', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('title');
+            $table->string('title')->unique();
+            $table->string('slug')->unique();
             $table->timestamps();
         });
 

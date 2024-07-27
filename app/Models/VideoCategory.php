@@ -6,17 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 
-class Videos extends Model
+class VideoCategory extends Model
 {
-    use HasFactory, HasUuids;
+     use HasFactory, HasUuids;
     protected $guarded = [];
 
-    protected $casts = [
-        'keywords' => 'array',
-    ];
-
-    public function videoCategory()
+    public function video()
     {
-        return $this->belongsTo(VideoCategory::class, 'category');
+        return $this->hasMany(Videos::class);
     }
 }

@@ -14,6 +14,7 @@ use App\Http\Controllers\DocumentationController;
 use App\Http\Controllers\DocumentCategoryController;
 use App\Http\Controllers\BlogCategoryController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\VideoCategoryController;
 
 //////////////////////////////////////Open Routes////////////////////////////////
 // Auth Routes
@@ -63,6 +64,9 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     // Blog Category Routes
     Route::get('blogs-category', [BlogCategoryController::class, 'getAllBlogCategories']);
 
+    // Video Category Routes
+    Route::get('videos-category', [VideoCategoryController::class, 'getAllVideoCategories']);
+
     // Tutorial Routes
     Route::get('tutorials', [TutorialController::class, 'getAllTutorials']);
     Route::get('/tutorials/{slug}/{type}', [TutorialController::class, 'getATutorial']);
@@ -104,6 +108,12 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::get('blogs-category/{blogcategory}', [BlogCategoryController::class, 'getABlogCategory']);
     Route::put('blogs-category/{blogcategory}', [BlogCategoryController::class, 'updateBlogCategory']);
     Route::delete('blogs-category/{blogcategory}', [BlogCategoryController::class, 'deleteBlogCategory']);
+
+    // Video Category Routes
+    Route::post('videos-category', [VideoCategoryController::class, 'postVideoCategory']);
+    Route::get('videos-category/{videocategory}', [VideoCategoryController::class, 'getAVideoCategory']);
+    Route::put('videos-category/{videocategory}', [VideoCategoryController::class, 'updateVideoCategory']);
+    Route::delete('videos-category/{videocategory}', [VideoCategoryController::class, 'deleteVideoCategory']);
 
     // Reviews Routes
     Route::get('reviews/{review}', [ReviewsController::class, 'getAReview']);

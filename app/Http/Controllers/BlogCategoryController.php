@@ -8,7 +8,7 @@ use App\Models\BlogCategory;
 
 class BlogCategoryController extends Controller
 {
-     public function postBlogCategory(Request $request)
+    public function postBlogCategory(Request $request)
     {
          $data = $request->validate([
             'title' => 'required|string|max:255',

@@ -15,13 +15,14 @@ class VideosController extends Controller
             'title' => 'required|string|unique:videos,title',
             'description' => 'required|string',
             'video_url' => 'required|string',
+            'category' => 'required|uuid|exists:video_categories,id',
             'keywords' => 'required|array',
             'keywords.*' => 'required|string',
         ]);
         $data['slug'] = Str::slug($data['title']);
 
         $video = Videos::create($data);
-        $createdVideo = Videos::where('id', $video->id)->first();
+        $createdVideo = Videos::with('videoCategory')->findOrFail($video->id);
 
         return $this->sendResponse(VideosResource::make($createdVideo)
                 ->response()
@@ -30,7 +31,7 @@ class VideosController extends Controller
 
     public function getVideos()
     {
-        $videos = Videos::paginate(20);
+        $videos = Videos::with('videoCategory')->paginate(20);
         return $this->sendResponse(VideosResource::collection($videos)
                 ->response()
                 ->getData(true), 'Videos retrieved successfully');
@@ -38,6 +39,7 @@ class VideosController extends Controller
 
     public function getAVideo(Videos $video)
     {
+        $video->load('videoCategory');
         return $this->sendResponse(VideosResource::make($video)
                 ->response()
                 ->getData(true),'Video retrieved successfully');
@@ -51,7 +53,7 @@ class VideosController extends Controller
             $data['slug'] = Str::slug($data['title']);
         }
         $video->update($data);
-        $updatedVideo = Videos::where('id',$video->id)->first();
+        $updatedVideo = Videos::with('videoCategory')->findOrFail($video->id);
 
         return $this->sendResponse(VideosResource::make($updatedVideo)
                 ->response()

@@ -10,6 +10,7 @@ use App\Http\Controllers\NewsLetterController;
 use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\VideosController;
+use App\Http\Controllers\DocumentationController;
 
 //////////////////////////////////////Open Routes////////////////////////////////
 // Auth Routes
@@ -36,6 +37,10 @@ Route::get('contacts', [ContactsController::class, 'getContacts']);
 Route::get('videos', [VideosController::class, 'getVideos']);
 Route::get('videos/{video}', [VideosController::class, 'getAVideo']);
 
+// Documentation Routes
+Route::get('documentations', [DocumentationController::class, 'getDocumentations']);
+Route::get('documentations/{documentation}', [DocumentationController::class, 'getADocumentation']);
+
 //////////////////////////////////////Private User Routes///////////////////////////////////////
 Route::middleware(['auth:sanctum','active'])->group(function () {
     // User Routes
@@ -57,7 +62,7 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
 }); 
 
 ///////////////////////////////////Private Admin Routes//////////////////////////////////////////
-Route::middleware(['auth:sanctum','admin','active'])->group(function(){
+Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     // User Routes
     Route::get('users', [UsersController::class, 'getUsers']);
     Route::put('users/{user}', [UsersController::class, 'updateUser']);
@@ -89,4 +94,9 @@ Route::middleware(['auth:sanctum','admin','active'])->group(function(){
     Route::post('videos', [VideosController::class, 'postVideo']);
     Route::put('videos/{video}', [VideosController::class, 'updateVideo']);
     Route::delete('videos/{video}', [VideosController::class, 'deleteVideo']);
+
+    // Documentation Routes
+    Route::post('documentations', [DocumentationController::class, 'postDocumentation']);
+    Route::put('documentations/{documentation}', [DocumentationController::class, 'updateDocumentation']);
+    Route::delete('documentations/{documentation}', [DocumentationController::class, 'deleteDocumentation']);
 });

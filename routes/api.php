@@ -9,6 +9,7 @@ use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\NewsLetterController;
 use App\Http\Controllers\ReviewsController;
 use App\Http\Controllers\ContactsController;
+use App\Http\Controllers\VideosController;
 
 //////////////////////////////////////Open Routes////////////////////////////////
 // Auth Routes
@@ -27,7 +28,13 @@ Route::delete('news-letter/{news_letter}', [NewsLetterController::class, 'unsubs
 
 // Reviews Routes
 Route::get('reviews', [ReviewsController::class, 'getReviews']);
+
+// Contacts Routes
 Route::get('contacts', [ContactsController::class, 'getContacts']);
+
+// Videos Routes
+Route::get('videos', [VideosController::class, 'getVideos']);
+Route::get('videos/{video}', [VideosController::class, 'getAVideo']);
 
 //////////////////////////////////////Private User Routes///////////////////////////////////////
 Route::middleware(['auth:sanctum','active'])->group(function () {
@@ -77,4 +84,9 @@ Route::middleware(['auth:sanctum','admin','active'])->group(function(){
     Route::get('contacts/{contact}', [ContactsController::class, 'getAContact']);
     Route::put('contacts/{contact}', [ContactsController::class, 'updateContact']);
     Route::delete('contacts/{contact}', [ContactsController::class, 'deleteContact']);
+
+    // Videos Routes
+    Route::post('videos', [VideosController::class, 'postVideo']);
+    Route::put('videos/{video}', [VideosController::class, 'updateVideo']);
+    Route::delete('videos/{video}', [VideosController::class, 'deleteVideo']);
 });

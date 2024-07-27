@@ -11,9 +11,10 @@ class BlogCategoryController extends Controller
     public function postBlogCategory(Request $request)
     {
          $data = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|unique:blog_categories,title',
         ]);
 
+        $data['slug'] = Str::slug($data['title']);
         $blogcategory = BlogCategory::create($data);
         $createdBlogCategory = BlogCategory::findOrFail($blogcategory->id);
         return $this->sendResponse(BlogCategoryResource::make($createdBlogCategory)
@@ -38,7 +39,12 @@ class BlogCategoryController extends Controller
 
     public function updateBlogCategory(BlogCategory $blogcategory, Request $request)
     {
-        $blogcategory->update($request->all());
+        $data = $request->all();
+
+        if ($request->has('title')) {
+            $data['slug'] = Str::slug($request->input('title'));
+        }
+        $blogcategory->update($data);
         $updatedDocument = BlogCategory::findOrFail($blogcategory->id);
         return $this->sendResponse(BlogCategoryResource::make($updatedDocument)
             ->response()

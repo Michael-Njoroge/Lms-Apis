@@ -11,9 +11,9 @@ class DocumentCategoryController extends Controller
     public function postDocumentCategory(Request $request)
     {
          $data = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|unique:document_categories,title',
         ]);
-
+        $data['slug'] = Str::slug($data['title']);
         $document = DocumentCategory::create($data);
         $createdDocumentCat = DocumentCategory::findOrFail($document->id);
         return $this->sendResponse(DocumentCategoryResource::make($createdDocumentCat)
@@ -38,7 +38,12 @@ class DocumentCategoryController extends Controller
 
     public function updateDocumentCategory(DocumentCategory $document, Request $request)
     {
-        $document->update($request->all());
+        $data = $request->all();
+
+        if ($request->has('title')) {
+            $data['slug'] = Str::slug($request->input('title'));
+        }
+        $document->update($data);
         $updatedDocument = DocumentCategory::findOrFail($document->id);
         return $this->sendResponse(DocumentCategoryResource::make($updatedDocument)
             ->response()

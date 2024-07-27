@@ -12,7 +12,7 @@ class TutCategoryController extends Controller
     public function postTutorial(Request $request)
     {
          $data = $request->validate([
-            'title' => 'required|string|max:255',
+            'title' => 'required|string|unique:tut_categories,title',
         ]);
 
         $data['slug'] = Str::slug($data['title']);

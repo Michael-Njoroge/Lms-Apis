@@ -6,21 +6,27 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\GoogleController;
 use App\Http\Controllers\TutCategoryController;
 use App\Http\Controllers\TutorialController;
+use App\Http\Controllers\NewsLetterController;
 
 Route::post('register', [UsersController::class, 'registerUser']);
 Route::post('login', [UsersController::class, 'loginUser']);
 Route::post('forgot-password', [UsersController::class, 'forgotPassword']);
 Route::post('reset-password', [UsersController::class, 'resetPassword']);
+
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+
+Route::post('news-letter', [NewsLetterController::class, 'subscribe']);
+Route::delete('news-letter/{news_letter}', [NewsLetterController::class, 'unsubscribe']);
 
 Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::get('users/{user}', [UsersController::class, 'getUser']);
     Route::put('users/update/password', [UsersController::class, 'updatePassword']);
+
     Route::get('tutorial/category', [TutCategoryController::class, 'getAllTutCategories']);
+
     Route::get('tutorials', [TutorialController::class, 'getAllTutorials']);
     Route::get('/tutorials/{slug}/{type}', [TutorialController::class, 'getATutorial']);
-
 }); 
 
 Route::middleware(['auth:sanctum','admin','active'])->group(function(){

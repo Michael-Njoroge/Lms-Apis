@@ -14,13 +14,15 @@ class TutCategoryResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+         return array_filter([
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
             'image' => $this->image,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ];
+        ], function ($value) {
+            return !is_null($value);
+        });
     }
 }

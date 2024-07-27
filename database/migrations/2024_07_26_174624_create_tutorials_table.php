@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('slug')->unique();
             $table->string('topic_name')->unique();
-            $table->string('content');
+            $table->text('content');
             $table->json('keywords');
             $table->foreignUuid('category')->constrained('tut_categories')->onDelete('cascade');
             $table->timestamps();

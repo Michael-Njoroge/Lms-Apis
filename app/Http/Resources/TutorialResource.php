@@ -14,15 +14,18 @@ class TutorialResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
+        return array_filter([
             'id' => $this->id,
             'title' => $this->title,
             'slug' => $this->slug,
             'topic_name' => $this->topic_name,
-            'keywords' => $this->keywords,
-            'category' => new TutCategoryResource($this->tutCategory),
+            'keywords' => !empty($this->keywords) ? $this->keywords : null,
+            'category_slug' => $this->whenLoaded('tutCategory') ? $this->tutCategory->slug : null,
+            'content' => $this->content,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
-        ];
+        ], function ($value) {
+            return !is_null($value);
+        });
     }
 }

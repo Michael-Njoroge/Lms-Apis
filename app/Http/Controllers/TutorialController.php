@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use App\Http\Resources\TutorialResource;
 use App\Models\Tutorial;
+use App\Models\TutCategory;
 
 class TutorialController extends Controller
 {
@@ -38,12 +39,25 @@ class TutorialController extends Controller
             ->getData(true),'Tutorials retrieved successfully');
     }
 
-    public function getATutorial(Tutorial $tutorial)
+    public function getATutorial(Request $request, $slug, $type)
     {
-        $tutorial->load('tutCategory');
-        return $this->sendResponse(TutorialResource::make($tutorial)
-            ->response()
-            ->getData(true),'Tutorial retrieved successfully');
+        try {
+            $category = TutCategory::where('slug', $type)->firstOrFail();
+            $tutorial = Tutorial::where('slug', $slug)
+                                ->where('category', $category->id)
+                                ->firstOrFail();
+            $tutorialTopics = Tutorial::where('category', $category->id)
+                                      ->select('id', 'topic_name', 'title', 'slug', 'category')
+                                      ->orderBy('created_at')
+                                      ->get();
+            return response()->json([
+                'tutorial' => new TutorialResource($tutorial),
+                'topics' => TutorialResource::collection($tutorialTopics)
+            ]);
+            
+        } catch (Exception $e) {
+            return $this->sendError('Tutorial not found');
+        }
     }
 
     public function updateTutorial(Tutorial $tutorial, Request $request)

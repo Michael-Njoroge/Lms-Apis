@@ -18,7 +18,9 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::get('users/{user}', [UsersController::class, 'getUser']);
     Route::put('users/update/password', [UsersController::class, 'updatePassword']);
     Route::get('tutorial/category', [TutCategoryController::class, 'getAllTutCategories']);
-    Route::get('tutorial', [TutorialController::class, 'getAllTutorials']);
+    Route::get('tutorials', [TutorialController::class, 'getAllTutorials']);
+    Route::get('/tutorials/{slug}/{type}', [TutorialController::class, 'getATutorial']);
+
 }); 
 
 Route::middleware(['auth:sanctum','admin','active'])->group(function(){
@@ -27,10 +29,9 @@ Route::middleware(['auth:sanctum','admin','active'])->group(function(){
     Route::put('users/block/unblock/{user}', [UsersController::class, 'blockUnblockUser']);
     Route::delete('users/{user}', [UsersController::class, 'deleteUser']);
 
-    Route::post('tutorial', [TutorialController::class, 'postTutorial']);
-    Route::get('tutorial/{tutorial}', [TutorialController::class, 'getATutorial']);
-    Route::put('tutorial/{tutorial}', [TutorialController::class, 'updateTutorial']);
-    Route::delete('tutorial/{tutorial}', [TutorialController::class, 'deleteTutorial']);
+    Route::post('tutorials', [TutorialController::class, 'postTutorial']);
+    Route::put('tutorials/{tutorial}', [TutorialController::class, 'updateTutorial']);
+    Route::delete('tutorials/{tutorial}', [TutorialController::class, 'deleteTutorial']);
 
     Route::post('tutorial/category', [TutCategoryController::class, 'postTutorial']);
     Route::get('tutorial/category/{tutorial}', [TutCategoryController::class, 'getATutCategory']);

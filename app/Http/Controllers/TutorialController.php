@@ -24,8 +24,7 @@ class TutorialController extends Controller
         $data['slug'] = Str::slug($data['title']);
 
         $tut = Tutorial::create($data);
-        $createdTut = Tutorial::findOrFail($tut->id);
-        $createdTut->load('tutCategory');
+        $createdTut = Tutorial::with('tutCategory')->findOrFail($tut->id);
         return $this->sendResponse(TutorialResource::make($createdTut)
             ->response()
             ->getData(true),'Tutorial created successfully');
@@ -68,8 +67,7 @@ class TutorialController extends Controller
             $data['slug'] = Str::slug($request->input('title'));
         }
         $tutorial->update($data);
-        $updatedTutorial = Tutorial::findOrFail($tutorial->id);
-        $updatedTutorial->load('tutCategory');
+        $updatedTutorial = Tutorial::with('tutCategory')->findOrFail($tutorial->id);
         return $this->sendResponse(TutorialResource::make($updatedTutorial)
             ->response()
             ->getData(true),'Tutorial updated successfully');

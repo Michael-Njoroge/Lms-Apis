@@ -28,4 +28,54 @@ class LessonController extends Controller
             ->response()
             ->getData(true), 'Lesson added to course successfully');
     }
+
+    public function getLessons(Course $course)
+    {
+        $lessons = $course->lessons()->get();
+        return $this->sendResponse(LessonResource::collection($lessons)
+            ->response()
+            ->getData(true), 'Lessons retrieved successfully');
+    }
+
+    public function getALesson(Course $course, Lesson $lesson)
+    {
+        if (!$course->lessons()->find($lesson->id)) {
+            return $this->sendError('Lesson not found in the specified course');
+        }
+
+        return $this->sendResponse(LessonResource::make($lesson)
+            ->response()
+            ->getData(true), 'Lesson retrieved successfully');
+    }
+
+    public function updateLesson(Request $request,Course $course, Lesson $lesson)
+    {
+        if (!$course->lessons()->find($lesson->id)) {
+            return $this->sendError('Lesson not found in the specified course');
+        }
+
+        $data = $request->all();
+
+        if ($request->has('title')) {
+            $data['slug'] = Str::slug($request->input('title'));
+        }
+        $lesson->update($data);
+        $updatedLesson = Lesson::findOrFail($lesson->id);
+
+        return $this->sendResponse(LessonResource::make($updatedLesson)
+            ->response()
+            ->getData(true), 'Lesson updated successfully');
+    }
+
+    public function deleteLesson(Course $course, Lesson $lesson)
+    {
+        if (!$course->lessons()->find($lesson->id)) {
+            return $this->sendError('Lesson not found in the specified course');
+        }
+        $course->lessons()->detach($lesson->id);
+        $lesson->delete();
+
+        return $this->sendResponse([], 'Lesson deleted successfully');
+    }
+
 }

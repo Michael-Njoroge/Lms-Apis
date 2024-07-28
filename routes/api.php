@@ -61,6 +61,10 @@ Route::get('courses', [CourseController::class, 'getAllCourses']);
 Route::get('courses/{course}', [CourseController::class, 'getACourse']);
 Route::get('/courses/{type}', [CourseController::class, 'getAllCoursesByCategory']);
 
+// Lesson Routes
+Route::get('lessons/{course}', [LessonController::class, 'getLessons']);
+Route::get('lessons/{course}/{lesson}', [LessonController::class, 'getALesson']);
+
 //////////////////////////////////////Private User Routes///////////////////////////////////////
 Route::middleware(['auth:sanctum','active'])->group(function () {
     // User Routes
@@ -174,6 +178,6 @@ Route::middleware(['auth:sanctum','active','both'])->group(function(){
 
     // Lesson Routes
     Route::post('lessons/{course}', [LessonController::class, 'createLesson']);
-    // Route::put('courses/{course}', [CourseController::class, 'updateCourse']);
-    // Route::delete('courses/{course}', [CourseController::class, 'deleteCourse']);
+    Route::put('lessons/{course}/{lesson}', [LessonController::class, 'updateLesson']);
+    Route::delete('lessons/{course}/{lesson}', [LessonController::class, 'deleteLesson']);
 });

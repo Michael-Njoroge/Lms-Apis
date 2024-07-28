@@ -65,4 +65,14 @@ class User extends Authenticatable
         );
         return $resetToken;
     }
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class, 'instructor_id');
+    }
+
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class, 'posted_by');
+    }
 }

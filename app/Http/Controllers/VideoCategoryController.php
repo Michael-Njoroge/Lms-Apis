@@ -9,7 +9,7 @@ use App\Models\VideoCategory;
 
 class VideoCategoryController extends Controller
 {
-     public function postVideoCategory(Request $request)
+    public function postVideoCategory(Request $request)
     {
          $data = $request->validate([
             'title' => 'required|string|unique:video_categories,title',

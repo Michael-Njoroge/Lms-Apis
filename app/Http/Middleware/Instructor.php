@@ -20,7 +20,7 @@ class Instructor
             return response()->json([
                 'status' => false,
                 'code' => 401,
-                'message' => 'Your are not an Instructor'
+                'message' => 'Your dont have the required permissions'
             ]);
         }
         return $next($request);

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class Admin
+class isBoth
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class Admin
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if($user->role !== 'admin'){
+        if($user->role !== 'admin' && $user->role !== 'instructor'){
             return response()->json([
                 'status' => false,
                 'code' => 401,

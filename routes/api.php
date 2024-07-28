@@ -18,7 +18,8 @@ use App\Http\Controllers\{
     VideoCategoryController, 
     CourseCategoryController, 
     CourseController, 
-    LessonController
+    LessonController,
+    WorkWithUsController
 };
 
 //////////////////////////////////////Open Routes////////////////////////////////
@@ -32,7 +33,7 @@ Route::post('reset-password', [UsersController::class, 'resetPassword']);
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-Route::middleware([])->group(function() {
+Route::middleware(['throttle:global'])->group(function() {
     // News Letter Routes
     Route::post('news-letter', [NewsLetterController::class, 'subscribe']);
     Route::delete('news-letter/{news_letter}', [NewsLetterController::class, 'unsubscribe']);
@@ -67,6 +68,9 @@ Route::middleware([])->group(function() {
     // Lesson Routes
     Route::get('lessons/{course}', [LessonController::class, 'getLessons']);
     Route::get('lessons/{course}/{lesson}', [LessonController::class, 'getALesson']);
+
+    // Work With Us Routes
+    Route::post('works', [WorkWithUsController::class, 'postWorkDetails'])->middleware('limit:20,15');
 });
 
 //////////////////////////////////////Private User Routes///////////////////////////////////////
@@ -160,6 +164,12 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::post('blogs', [BlogController::class, 'postBlog'])->middleware('limit:20,15');
     Route::put('blogs/{blog}', [BlogController::class, 'updateBlog'])->middleware('limit:20,15');
     Route::delete('blogs/{blog}', [BlogController::class, 'deleteBlog'])->middleware('limit:20,15');
+
+    // Work With Us Routes
+    Route::get('works', [WorkWithUsController::class, 'getWorkDetails'])->middleware('limit:20,15');
+    Route::get('works/{workdetail}', [WorkWithUsController::class, 'getAWorkDetail'])->middleware('limit:20,15');
+    Route::put('works/{workdetail}', [WorkWithUsController::class, 'updateWorkDetail'])->middleware('limit:20,15');
+    Route::delete('works/{workdetail}', [WorkWithUsController::class, 'deleteWorkDetail'])->middleware('limit:20,15');
 });
 
 ///////////////////////////////////Private Instructor Routes//////////////////////////////////////////

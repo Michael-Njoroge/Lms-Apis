@@ -2,22 +2,24 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\UsersController;
-use App\Http\Controllers\GoogleController;
-use App\Http\Controllers\TutCategoryController;
-use App\Http\Controllers\TutorialController;
-use App\Http\Controllers\NewsLetterController;
-use App\Http\Controllers\ReviewsController;
-use App\Http\Controllers\ContactsController;
-use App\Http\Controllers\VideosController;
-use App\Http\Controllers\DocumentationController;
-use App\Http\Controllers\DocumentCategoryController;
-use App\Http\Controllers\BlogCategoryController;
-use App\Http\Controllers\BlogController;
-use App\Http\Controllers\VideoCategoryController;
-use App\Http\Controllers\CourseCategoryController;
-use App\Http\Controllers\CourseController;
-use App\Http\Controllers\LessonController;
+use App\Http\Controllers\{
+    UsersController,
+    GoogleController, 
+    TutCategoryController, 
+    TutorialController, 
+    NewsLetterController, 
+    ReviewsController, 
+    ContactsController, 
+    VideosController, 
+    DocumentationController, 
+    DocumentCategoryController, 
+    BlogCategoryController, 
+    BlogController, 
+    VideoCategoryController, 
+    CourseCategoryController, 
+    CourseController, 
+    LessonController
+};
 
 //////////////////////////////////////Open Routes////////////////////////////////
 // Auth Routes
@@ -30,40 +32,42 @@ Route::post('reset-password', [UsersController::class, 'resetPassword']);
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
 Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
-// News Letter Routes
-Route::post('news-letter', [NewsLetterController::class, 'subscribe']);
-Route::delete('news-letter/{news_letter}', [NewsLetterController::class, 'unsubscribe']);
+Route::middleware([])->group(function() {
+    // News Letter Routes
+    Route::post('news-letter', [NewsLetterController::class, 'subscribe']);
+    Route::delete('news-letter/{news_letter}', [NewsLetterController::class, 'unsubscribe']);
 
-// Reviews Routes
-Route::get('reviews', [ReviewsController::class, 'getReviews']);
+    // Reviews Routes
+    Route::get('reviews', [ReviewsController::class, 'getReviews']);
 
-// Contacts Routes
-Route::get('contacts', [ContactsController::class, 'getContacts']);
+    // Contacts Routes
+    Route::get('contacts', [ContactsController::class, 'getContacts']);
 
-// Videos Routes
-Route::get('videos', [VideosController::class, 'getVideos']);
-Route::get('videos/{video}', [VideosController::class, 'getAVideo']);
+    // Videos Routes
+    Route::get('videos', [VideosController::class, 'getVideos']);
+    Route::get('videos/{video}', [VideosController::class, 'getAVideo']);
 
-// Documentation Routes
-Route::get('documentations', [DocumentationController::class, 'getDocumentations']);
-Route::get('documentations/{documentation}', [DocumentationController::class, 'getADocumentation']);
+    // Documentation Routes
+    Route::get('documentations', [DocumentationController::class, 'getDocumentations']);
+    Route::get('documentations/{documentation}', [DocumentationController::class, 'getADocumentation']);
 
-// Blog Routes
-Route::get('blogs', [BlogController::class, 'getAllBlogs']);
-Route::get('blogs/{blog}', [BlogController::class, 'getABlog']);
+    // Blog Routes
+    Route::get('blogs', [BlogController::class, 'getAllBlogs']);
+    Route::get('blogs/{blog}', [BlogController::class, 'getABlog']);
 
-// Course Category Routes
-Route::get('courses-category', [CourseCategoryController::class, 'getAllCourseCategories']);
-Route::get('courses-category/{coursecategory}', [CourseCategoryController::class, 'getACourseCategory']);
+    // Course Category Routes
+    Route::get('courses-category', [CourseCategoryController::class, 'getAllCourseCategories']);
+    Route::get('courses-category/{coursecategory}', [CourseCategoryController::class, 'getACourseCategory']);
 
-// Course Routes
-Route::get('courses', [CourseController::class, 'getAllCourses']);
-Route::get('courses/{course}', [CourseController::class, 'getACourse']);
-Route::get('/courses/{type}', [CourseController::class, 'getAllCoursesByCategory']);
+    // Course Routes
+    Route::get('courses', [CourseController::class, 'getAllCourses']);
+    Route::get('courses/{course}', [CourseController::class, 'getACourse']);
+    Route::get('/courses/{type}', [CourseController::class, 'getAllCoursesByCategory']);
 
-// Lesson Routes
-Route::get('lessons/{course}', [LessonController::class, 'getLessons']);
-Route::get('lessons/{course}/{lesson}', [LessonController::class, 'getALesson']);
+    // Lesson Routes
+    Route::get('lessons/{course}', [LessonController::class, 'getLessons']);
+    Route::get('lessons/{course}/{lesson}', [LessonController::class, 'getALesson']);
+});
 
 //////////////////////////////////////Private User Routes///////////////////////////////////////
 Route::middleware(['auth:sanctum','active'])->group(function () {
@@ -99,7 +103,7 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::post('contacts', [ContactsController::class, 'createContact']);
     Route::get('contacts/{contact}', [ContactsController::class, 'getAContact']);
 
-}); 
+});
 
 ///////////////////////////////////Private Admin Routes//////////////////////////////////////////
 Route::middleware(['auth:sanctum','active','admin'])->group(function(){
@@ -110,52 +114,52 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::delete('users/{user}', [UsersController::class, 'deleteUser']);
 
     // Tutorial Routes
-    Route::post('tutorials', [TutorialController::class, 'postTutorial']);
-    Route::put('tutorials/{tutorial}', [TutorialController::class, 'updateTutorial']);
-    Route::delete('tutorials/{tutorial}', [TutorialController::class, 'deleteTutorial']);
+    Route::post('tutorials', [TutorialController::class, 'postTutorial'])->middleware('limit:100,60');
+    Route::put('tutorials/{tutorial}', [TutorialController::class, 'updateTutorial'])->middleware('limit:100,60');
+    Route::delete('tutorials/{tutorial}', [TutorialController::class, 'deleteTutorial'])->middleware('limit:100,60');
 
     // Tutorial Category Routes
-    Route::post('tutorial/category', [TutCategoryController::class, 'postTutorial']);
-    Route::put('tutorial/category/{tutorial}', [TutCategoryController::class, 'updateTutCategory']);
-    Route::delete('tutorial/category/{tutorial}', [TutCategoryController::class, 'deleteTutCategory']);
+    Route::post('tutorial/category', [TutCategoryController::class, 'postTutorial'])->middleware('limit:50,30');
+    Route::put('tutorial/category/{tutorial}', [TutCategoryController::class, 'updateTutCategory'])->middleware('limit:50,30');
+    Route::delete('tutorial/category/{tutorial}', [TutCategoryController::class, 'deleteTutCategory'])->middleware('limit:50,30');
 
     // Document Category Routes
-    Route::post('documents/category', [DocumentCategoryController::class, 'postDocumentCategory']);
-    Route::put('documents/category/{document}', [DocumentCategoryController::class, 'updateDocumentCategory']);
-    Route::delete('documents/category/{document}', [DocumentCategoryController::class, 'deleteDocumentCategory']);
+    Route::post('documents/category', [DocumentCategoryController::class, 'postDocumentCategory'])->middleware('limit:30,15');
+    Route::put('documents/category/{document}', [DocumentCategoryController::class, 'updateDocumentCategory'])->middleware('limit:30,15');
+    Route::delete('documents/category/{document}', [DocumentCategoryController::class, 'deleteDocumentCategory'])->middleware('limit:30,15');
 
     // Blog Category Routes
-    Route::post('blogs-category', [BlogCategoryController::class, 'postBlogCategory']);
-    Route::put('blogs-category/{blogcategory}', [BlogCategoryController::class, 'updateBlogCategory']);
-    Route::delete('blogs-category/{blogcategory}', [BlogCategoryController::class, 'deleteBlogCategory']);
+    Route::post('blogs-category', [BlogCategoryController::class, 'postBlogCategory'])->middleware('limit:20,15');
+    Route::put('blogs-category/{blogcategory}', [BlogCategoryController::class, 'updateBlogCategory'])->middleware('limit:20,15');
+    Route::delete('blogs-category/{blogcategory}', [BlogCategoryController::class, 'deleteBlogCategory'])->middleware('limit:20,15');
 
     // Video Category Routes
-    Route::post('videos-category', [VideoCategoryController::class, 'postVideoCategory']);
-    Route::put('videos-category/{videocategory}', [VideoCategoryController::class, 'updateVideoCategory']);
-    Route::delete('videos-category/{videocategory}', [VideoCategoryController::class, 'deleteVideoCategory']);
+    Route::post('videos-category', [VideoCategoryController::class, 'postVideoCategory'])->middleware('limit:20,15');
+    Route::put('videos-category/{videocategory}', [VideoCategoryController::class, 'updateVideoCategory'])->middleware('limit:20,15');
+    Route::delete('videos-category/{videocategory}', [VideoCategoryController::class, 'deleteVideoCategory'])->middleware('limit:20,15');
 
     // Reviews Routes
-    Route::put('reviews/{review}', [ReviewsController::class, 'updateReview']);
-    Route::delete('reviews/{review}', [ReviewsController::class, 'deleteReview']);
+    Route::put('reviews/{review}', [ReviewsController::class, 'updateReview'])->middleware('limit:20,15');
+    Route::delete('reviews/{review}', [ReviewsController::class, 'deleteReview'])->middleware('limit:20,15');
 
     // Contact Routes
-    Route::put('contacts/{contact}', [ContactsController::class, 'updateContact']);
-    Route::delete('contacts/{contact}', [ContactsController::class, 'deleteContact']);
+    Route::put('contacts/{contact}', [ContactsController::class, 'updateContact'])->middleware('limit:20,15');
+    Route::delete('contacts/{contact}', [ContactsController::class, 'deleteContact'])->middleware('limit:20,15');
 
     // Videos Routes
-    Route::post('videos', [VideosController::class, 'postVideo']);
-    Route::put('videos/{video}', [VideosController::class, 'updateVideo']);
-    Route::delete('videos/{video}', [VideosController::class, 'deleteVideo']);
+    Route::post('videos', [VideosController::class, 'postVideo'])->middleware('limit:20,15');
+    Route::put('videos/{video}', [VideosController::class, 'updateVideo'])->middleware('limit:20,15');
+    Route::delete('videos/{video}', [VideosController::class, 'deleteVideo'])->middleware('limit:20,15');
 
     // Documentation Routes
-    Route::post('documentations', [DocumentationController::class, 'postDocumentation']);
-    Route::put('documentations/{documentation}', [DocumentationController::class, 'updateDocumentation']);
-    Route::delete('documentations/{documentation}', [DocumentationController::class, 'deleteDocumentation']);
+    Route::post('documentations', [DocumentationController::class, 'postDocumentation'])->middleware('limit:20,15');
+    Route::put('documentations/{documentation}', [DocumentationController::class, 'updateDocumentation'])->middleware('limit:20,15');
+    Route::delete('documentations/{documentation}', [DocumentationController::class, 'deleteDocumentation'])->middleware('limit:20,15');
 
     // Blog Routes
-    Route::post('blogs', [BlogController::class, 'postBlog']);
-    Route::put('blogs/{blog}', [BlogController::class, 'updateBlog']);
-    Route::delete('blogs/{blog}', [BlogController::class, 'deleteBlog']);
+    Route::post('blogs', [BlogController::class, 'postBlog'])->middleware('limit:20,15');
+    Route::put('blogs/{blog}', [BlogController::class, 'updateBlog'])->middleware('limit:20,15');
+    Route::delete('blogs/{blog}', [BlogController::class, 'deleteBlog'])->middleware('limit:20,15');
 });
 
 ///////////////////////////////////Private Instructor Routes//////////////////////////////////////////
@@ -167,17 +171,17 @@ Route::middleware(['auth:sanctum','active','instructor'])->group(function(){
 ///////////////////////////////////Private Routes For Both Admin & Instructor//////////////////////////////////////////
 Route::middleware(['auth:sanctum','active','both'])->group(function(){
     // Course Category Routes
-    Route::post('courses-category', [CourseCategoryController::class, 'postCourseCategory']);
-    Route::put('courses-category/{coursecategory}', [CourseCategoryController::class, 'updateCourseCategory']);
-    Route::delete('courses-category/{coursecategory}', [CourseCategoryController::class, 'deleteCourseCategory']);
+    Route::post('courses-category', [CourseCategoryController::class, 'postCourseCategory'])->middleware('limit:20,15');
+    Route::put('courses-category/{coursecategory}', [CourseCategoryController::class, 'updateCourseCategory'])->middleware('limit:20,15');
+    Route::delete('courses-category/{coursecategory}', [CourseCategoryController::class, 'deleteCourseCategory'])->middleware('limit:20,15');
 
     // Course Routes
-    Route::post('courses', [CourseController::class, 'postCourse']);
-    Route::put('courses/{course}', [CourseController::class, 'updateCourse']);
-    Route::delete('courses/{course}', [CourseController::class, 'deleteCourse']);
+    Route::post('courses', [CourseController::class, 'postCourse'])->middleware('limit:20,15');
+    Route::put('courses/{course}', [CourseController::class, 'updateCourse'])->middleware('limit:20,15');
+    Route::delete('courses/{course}', [CourseController::class, 'deleteCourse'])->middleware('limit:20,15');
 
     // Lesson Routes
-    Route::post('lessons/{course}', [LessonController::class, 'createLesson']);
-    Route::put('lessons/{course}/{lesson}', [LessonController::class, 'updateLesson']);
-    Route::delete('lessons/{course}/{lesson}', [LessonController::class, 'deleteLesson']);
+    Route::post('lessons/{course}', [LessonController::class, 'createLesson'])->middleware('limit:20,15');
+    Route::put('lessons/{course}/{lesson}', [LessonController::class, 'updateLesson'])->middleware('limit:20,15');
+    Route::delete('lessons/{course}/{lesson}', [LessonController::class, 'deleteLesson'])->middleware('limit:20,15');
 });

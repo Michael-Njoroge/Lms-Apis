@@ -7,6 +7,7 @@ use App\Http\Middleware\Admin;
 use App\Http\Middleware\Instructor;
 use App\Http\Middleware\isBoth;
 use App\Http\Middleware\Active;
+use App\Http\Middleware\RateLimit;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'instructor' => Instructor::class,
             'both' => isBoth::class,
             'active' => Active::class,
+            'limit' => RateLimit::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

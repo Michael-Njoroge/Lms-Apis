@@ -5,7 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\Instructor;
-use App\Http\Middleware\isBoth;
+use App\Http\Middleware\IsBoth;
 use App\Http\Middleware\Active;
 use App\Http\Middleware\RateLimit;
 
@@ -20,7 +20,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => Admin::class,
             'instructor' => Instructor::class,
-            'both' => isBoth::class,
+            'both' => IsBoth::class,
             'active' => Active::class,
             'limit' => RateLimit::class,
         ]);

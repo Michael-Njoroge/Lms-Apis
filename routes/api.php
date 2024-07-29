@@ -21,7 +21,8 @@ use App\Http\Controllers\{
     LessonController,
     WorkWithUsController,
     ProjectCategoryController,
-    ProjectController
+    ProjectController,
+    SessionController
 };
 
 //////////////////////////////////////Open Routes////////////////////////////////
@@ -115,7 +116,9 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
 
     // Contacts Routes
     Route::post('contacts', [ContactsController::class, 'createContact']);
-    Route::get('contacts/{contact}', [ContactsController::class, 'getAContact']);
+
+    // Sessions Routes
+    Route::post('sessions', [SessionController::class, 'bookSession']);
 
 });
 
@@ -162,8 +165,15 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::delete('reviews/{review}', [ReviewsController::class, 'deleteReview'])->middleware('limit:20,15');
 
     // Contact Routes
+    Route::get('contacts/{contact}', [ContactsController::class, 'getAContact'])->middleware('limit:20,15');
     Route::put('contacts/{contact}', [ContactsController::class, 'updateContact'])->middleware('limit:20,15');
     Route::delete('contacts/{contact}', [ContactsController::class, 'deleteContact'])->middleware('limit:20,15');
+
+    // Session Routes
+    Route::get('sessions', [SessionController::class, 'getSessions'])->middleware('limit:20,15');
+    Route::get('sessions/{session}', [SessionController::class, 'getASession'])->middleware('limit:20,15');
+    Route::put('sessions/{session}', [SessionController::class, 'updateSession'])->middleware('limit:20,15');
+    Route::delete('sessions/{session}', [SessionController::class, 'deleteSession'])->middleware('limit:20,15');
 
     // Videos Routes
     Route::post('videos', [VideosController::class, 'postVideo'])->middleware('limit:20,15');

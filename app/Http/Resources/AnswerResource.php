@@ -16,10 +16,9 @@ class AnswerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => new UsersResource($this->whenLoaded('user')),
-            'question' => new QuestionResource($this->whenLoaded('question')),
             'description' => $this->description,
-            'votes' => QnaVoteResource::collection($this->whenLoaded('votes')),
+            'vote_count' => $this->vote_count,
+            'comments' => QnaCommentResource::collection($this->whenLoaded('comments')),
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),
         ];

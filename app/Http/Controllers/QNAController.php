@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Resources\QNAResource;
 use App\Http\Resources\QnaTagResource;
+use App\Http\Resources\QnaCommentResource;
 use Illuminate\Support\Str;
 use App\Models\Question;
 use App\Models\Answer;
 use App\Models\QnaSession;
 use App\Models\QnaTag;
+use App\Models\QnaComment;
 
 class QNAController extends Controller
 {
@@ -70,7 +72,17 @@ class QNAController extends Controller
 
     public function getAllPosts()
     {
-        $posts = QnaSession::with(['question', 'answer','user', 'question.tag', 'question.comments', 'question.votes', 'question.answers'])->paginate(20);
+        $posts = QnaSession::with([
+            'question', 
+            'answer', 
+            'user', 
+            'question.tag', 
+            'question.comments', 
+            'question.votes', 
+            'question.answers.comments',
+            'answer.comments'
+        ])->paginate(20);
+        
         return $this->sendResponse(QNAResource::collection($posts)
                 ->response()
                 ->getData(true),'QNA posts retrieved successfully');
@@ -201,5 +213,79 @@ class QNAController extends Controller
         $tag->delete();
         return $this->sendResponse([], 'Tag deleted successfully');
     }
+
+    //////////////////////Comments////////////////////////////////
+    public function postComment(Request $request, QnaSession $post)
+    {
+        $data = $request->validate([
+            'comment' => 'required|string',
+            'question_id' => 'required_without:answer_id|uuid|exists:questions,id',
+            'answer_id' => 'required_without:question_id|uuid|exists:answers,id',
+        ]);
+
+        $data['user_id'] = auth()->id();
+
+        // Ensure either question_id or answer_id is provided, but not both
+        if (!isset($data['question_id']) && !isset($data['answer_id'])) {
+            return $this->sendError('Either question_id or answer_id must be provided');
+        }
+
+        if (isset($data['question_id'])) {
+            $question = Question::findOrFail($data['question_id']);
+            $comment = QnaComment::create([
+                'comment' => $data['comment'],
+                'question_id' => $data['question_id'],
+                'user_id' => $data['user_id']
+            ]);
+            $createdComment = QnaComment::with(['question', 'user'])->findOrFail($comment->id);
+            return $this->sendResponse(QnaCommentResource::make($createdComment)
+                ->response()
+                ->getData(true), 'Question commented successfully');
+        }
+
+        if (isset($data['answer_id'])) {
+            $answer = Answer::findOrFail($data['answer_id']);
+            $comment = QnaComment::create([
+                'comment' => $data['comment'],
+                'answer_id' => $data['answer_id'],
+                'user_id' => $data['user_id']
+            ]);
+            $createdComment = QnaComment::with(['answer', 'user'])->findOrFail($comment->id);
+            return $this->sendResponse(QnaCommentResource::make($createdComment)
+                ->response()
+                ->getData(true), 'Answer commented successfully');
+        }
+    }
+
+    public function deleteComment(Request $request, QnaSession $post)
+    {
+        $data = $request->validate([
+            'question_id' => 'required_without:answer_id|uuid|exists:questions,id',
+            'answer_id' => 'required_without:question_id|uuid|exists:answers,id'
+        ]);
+
+        if (isset($data['question_id'])) {
+            $question = Question::findOrFail($data['question_id']);
+            $comment = QnaComment::where('question_id', $data['question_id'])->first();
+            if ($comment) {
+                $comment->delete();
+                return $this->sendResponse([], 'Question comment deleted successfully');
+            } else {
+                return $this->sendError('Comment not found');
+            }
+        }
+
+        if (isset($data['answer_id'])) {
+            $answer = Answer::findOrFail($data['answer_id']);
+            $comment = QnaComment::where('answer_id', $data['answer_id'])->first();
+            if ($comment) {
+                $comment->delete();
+                return $this->sendResponse([], 'Answer comment deleted successfully');
+            } else {
+                return $this->sendError('Comment not found');
+            }
+        }
+    }
+
 
 }

@@ -69,11 +69,9 @@ return new class extends Migration
 
         Schema::table('questions', function(Blueprint $table) {
             $table->foreignUuid('tag_id')->nullable()->constrained('qna_tags')->onDelete('cascade');
-            $table->foreignUuid('comment_id')->nullable()->constrained('qna_comments')->onDelete('cascade');
         });
 
         Schema::table('answers', function(Blueprint $table) {
-            $table->foreignUuid('comment_id')->nullable()->constrained('qna_comments')->onDelete('cascade');
             $table->foreignUuid('question_id')->constrained('questions')->onDelete('cascade')->after('user_id');
         });
     }

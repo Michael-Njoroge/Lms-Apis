@@ -135,6 +135,10 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::put('posts/{post}', [QNAController::class, 'updatePost']);
     Route::delete('posts/{post}', [QNAController::class, 'deletePost']);
 
+     // Qna Comment Routes
+    Route::post('post-comments/{post}', [QNAController::class, 'postComment']);
+    Route::delete('post-comments/{post}', [QNAController::class, 'deleteComment']);
+
 });
 
 ///////////////////////////////////Private Admin Routes//////////////////////////////////////////

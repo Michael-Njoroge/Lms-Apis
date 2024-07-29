@@ -20,7 +20,7 @@ class QuestionResource extends JsonResource
             'description' => $this->description,
             'slug' => $this->slug,
             'votes' => QnaVoteResource::collection($this->whenLoaded('votes')),
-            'tag' => $this->tag ? new QnaTagResource($this->tag) : null,
+            'tag' => new QnaTagResource($this->whenLoaded('tag')),
             'comments' => QnaCommentResource::collection($this->whenLoaded('comments')),
             'answers' => AnswerResource::collection($this->whenLoaded('answers')),
             'created_at' => $this->created_at->toDateTimeString(),

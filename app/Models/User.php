@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Carbon;
 use App\Models\PasswordReset;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -47,11 +48,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function reviews()
-    {
-        return $this->hasMany(Reviews::class);
-    }
-
     public function createResetPasswordToken()
     {
         $resetToken = Str::random(32);
@@ -66,13 +62,38 @@ class User extends Authenticatable
         return $resetToken;
     }
 
-    public function courses()
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Reviews::class);
+    }
+
+    public function courses(): HasMany
     {
         return $this->hasMany(Course::class, 'instructor_id');
     }
 
-    public function ratings()
+    public function ratings(): HasMany
     {
         return $this->hasMany(Rating::class, 'posted_by');
+    }
+
+    public function qnaSessions(): HasMany
+    {
+        return $this->hasMany(QnaSession::class);
+    }
+
+    public function answers(): HasMany
+    {
+        return $this->hasMany(Answer::class);
+    }
+
+    public function votes(): HasMany
+    {
+        return $this->hasMany(QnaVote::class);
+    }
+
+    public function comments(): HasMany
+    {
+        return $this->hasMany(QnaComment::class);
     }
 }

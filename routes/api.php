@@ -22,7 +22,8 @@ use App\Http\Controllers\{
     WorkWithUsController,
     ProjectCategoryController,
     ProjectController,
-    SessionController
+    SessionController,
+    QNAController
 };
 
 //////////////////////////////////////Open Routes////////////////////////////////
@@ -77,7 +78,11 @@ Route::middleware(['throttle:global'])->group(function() {
     Route::get('lessons/{course}/{lesson}', [LessonController::class, 'getALesson']);
 
     // Work With Us Routes
-    Route::post('works', [WorkWithUsController::class, 'postWorkDetails'])->middleware('limit:20,15');
+    Route::post('works', [WorkWithUsController::class, 'postWorkDetails']);
+
+    // Qna Session Routes
+    Route::get('posts', [QNAController::class, 'getAllPosts']);
+    Route::get('posts/{post}', [QNAController::class, 'getPost']);
 });
 
 //////////////////////////////////////Private User Routes///////////////////////////////////////
@@ -119,6 +124,12 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
 
     // Sessions Routes
     Route::post('sessions', [SessionController::class, 'bookSession']);
+
+    // Qna Session Routes
+    Route::post('post-question', [QNAController::class, 'createPost']);
+    Route::post('post-answer/{post}', [QNAController::class, 'createAnswer']);
+    Route::put('posts/{post}', [QNAController::class, 'updatePost']);
+    Route::delete('posts/{post}', [QNAController::class, 'deletePost']);
 
 });
 

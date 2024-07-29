@@ -19,7 +19,9 @@ use App\Http\Controllers\{
     CourseCategoryController, 
     CourseController, 
     LessonController,
-    WorkWithUsController
+    WorkWithUsController,
+    ProjectCategoryController,
+    ProjectController
 };
 
 //////////////////////////////////////Open Routes////////////////////////////////
@@ -47,6 +49,10 @@ Route::middleware(['throttle:global'])->group(function() {
     // Videos Routes
     Route::get('videos', [VideosController::class, 'getVideos']);
     Route::get('videos/{video}', [VideosController::class, 'getAVideo']);
+
+    // Project Routes
+    Route::get('projects', [ProjectController::class, 'getAllProjects']);
+    Route::get('projects/{project}', [ProjectController::class, 'getAProject']);
 
     // Documentation Routes
     Route::get('documentations', [DocumentationController::class, 'getDocumentations']);
@@ -95,6 +101,10 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::get('videos-category', [VideoCategoryController::class, 'getAllVideoCategories']);
     Route::get('videos-category/{videocategory}', [VideoCategoryController::class, 'getAVideoCategory']);
 
+    // Project Category Routes
+    Route::get('projects-category', [ProjectCategoryController::class, 'getAllProjectCategories']);
+    Route::get('projects-category/{projectcategory}', [ProjectCategoryController::class, 'getAProjectCategory']);
+
     // Tutorial Routes
     Route::get('tutorials', [TutorialController::class, 'getAllTutorials']);
     Route::get('/tutorials/{slug}/{type}', [TutorialController::class, 'getATutorial']);
@@ -142,6 +152,11 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::put('videos-category/{videocategory}', [VideoCategoryController::class, 'updateVideoCategory'])->middleware('limit:20,15');
     Route::delete('videos-category/{videocategory}', [VideoCategoryController::class, 'deleteVideoCategory'])->middleware('limit:20,15');
 
+    // Project Category Routes
+    Route::post('projects-category', [ProjectCategoryController::class, 'postProjectCategory'])->middleware('limit:20,15');
+    Route::put('projects-category/{projectcategory}', [ProjectCategoryController::class, 'updateProjectCategory'])->middleware('limit:20,15');
+    Route::delete('projects-category/{projectcategory}', [ProjectCategoryController::class, 'deleteProjectCategory'])->middleware('limit:20,15');
+
     // Reviews Routes
     Route::put('reviews/{review}', [ReviewsController::class, 'updateReview'])->middleware('limit:20,15');
     Route::delete('reviews/{review}', [ReviewsController::class, 'deleteReview'])->middleware('limit:20,15');
@@ -154,6 +169,11 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::post('videos', [VideosController::class, 'postVideo'])->middleware('limit:20,15');
     Route::put('videos/{video}', [VideosController::class, 'updateVideo'])->middleware('limit:20,15');
     Route::delete('videos/{video}', [VideosController::class, 'deleteVideo'])->middleware('limit:20,15');
+
+    // Project Routes
+    Route::post('projects', [ProjectController::class, 'postProject'])->middleware('limit:20,15');
+    Route::put('projects/{project}', [ProjectController::class, 'updateProject'])->middleware('limit:20,15');
+    Route::delete('projects/{project}', [ProjectController::class, 'deleteProject'])->middleware('limit:20,15');
 
     // Documentation Routes
     Route::post('documentations', [DocumentationController::class, 'postDocumentation'])->middleware('limit:20,15');

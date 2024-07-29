@@ -83,6 +83,10 @@ Route::middleware(['throttle:global'])->group(function() {
     // Qna Session Routes
     Route::get('posts', [QNAController::class, 'getAllPosts']);
     Route::get('posts/{post}', [QNAController::class, 'getPost']);
+
+    // Tag Routes
+    Route::get('tags', [QNAController::class, 'getAllTags']);
+    Route::get('tags/{tag}', [QNAController::class, 'getATag']);
 });
 
 //////////////////////////////////////Private User Routes///////////////////////////////////////
@@ -211,6 +215,11 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::get('works/{workdetail}', [WorkWithUsController::class, 'getAWorkDetail'])->middleware('limit:20,15');
     Route::put('works/{workdetail}', [WorkWithUsController::class, 'updateWorkDetail'])->middleware('limit:20,15');
     Route::delete('works/{workdetail}', [WorkWithUsController::class, 'deleteWorkDetail'])->middleware('limit:20,15');
+
+    // Tag Routes
+    Route::post('tags', [QNAController::class, 'createTag']);
+    Route::put('tags/{tag}', [QNAController::class, 'updateTag']);
+    Route::delete('tags/{tag}', [QNAController::class, 'deleteTag']);
 });
 
 ///////////////////////////////////Private Instructor Routes//////////////////////////////////////////

@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\QNAResource;
+use App\Http\Resources\QnaTagResource;
 use Illuminate\Support\Str;
 use App\Models\Question;
 use App\Models\Answer;
 use App\Models\QnaSession;
+use App\Models\QnaTag;
 
 class QNAController extends Controller
 {
@@ -15,14 +17,19 @@ class QNAController extends Controller
     {
         $data = $request->validate([
             'title' => 'required|string|unique:questions,title',
-            'description' => 'required|string'
+            'description' => 'required|string',
+            'tag_id' => 'sometimes|required|uuid|exists:qna_tags,id'
         ]);
+
         $data['slug'] = Str::slug($data['title']);
 
         $question = Question::create($data);
-        $tag = $question->tag;
-        if ($tag) {
-            $tag->increment('total_questions');
+
+        if (isset($data['tag_id'])) {
+            $tag = QnaTag::findOrFail($data['tag_id']);
+            if ($tag) {
+                $tag->increment('total_questions');
+            }
         }
 
         $qna_session = QnaSession::create([
@@ -83,12 +90,29 @@ class QNAController extends Controller
             'question.title' => 'sometimes|required|string|unique:questions,title,' . $post->question->id,
             'question.description' => 'sometimes|required|string',
             'answer.description' => 'sometimes|required|string',
+            'tag_id' => 'sometimes|required|uuid|exists:qna_tags,id'
         ]);
         $question = $post->question;
         $answer = $post->answer;
 
          if ($question && isset($data['question'])) {
             $question->update($data['question']);
+        }
+
+        if (isset($data['tag_id'])) {
+            $oldTag = $question->tag;
+            $newTag = QnaTag::findOrFail($data['tag_id']);
+
+            $question->tag()->associate($data['tag_id']);
+            $question->save();
+
+            if ($newTag) {
+                $newTag->increment('total_questions');
+            }
+
+            if ($oldTag) {
+                $oldTag->decrement('total_questions');
+            }
         }
 
         if ($answer && isset($data['answer'])) {
@@ -122,4 +146,60 @@ class QNAController extends Controller
 
         return $this->sendResponse([], 'QNA post deleted successfully');
     }
+
+    //////////////////////////TAGS/////////////////////////
+    public function createTag(Request $request)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|unique:questions,title',
+            'description' => 'required|string',
+        ]);
+
+        $data['slug'] = Str::slug($data['title']);
+        $tag = QnaTag::create($data);
+
+        $createdTag = QnaTag::findOrFail($tag->id);
+
+        return $this->sendResponse(QnaTagResource::make($createdTag)
+            ->response()
+            ->getData(true), 'Tag created successfully');
+    }
+
+    public function getAllTags()
+    {
+        $tags = QnaTag::paginate(20);
+
+        return $this->sendResponse(QnaTagResource::collection($tags)
+            ->response()
+            ->getData(true), 'Tags retrieved successfully');
+    }
+
+    public function getATag(QnaTag $tag)
+    {
+        return $this->sendResponse(QnaTagResource::make($tag)
+            ->response()
+            ->getData(true), 'Tag retrieved successfully');
+    }
+
+    public function updateTag(Request $request, QnaTag $tag)
+    {
+        $data = $request->all();
+        if ($request->has('title')) {
+            $data['slug'] = Str::slug($request->input('title'));
+        }
+
+        $tag->update($data);
+        $updatedTag = QnaTag::findOrFail($tag->id);
+
+        return $this->sendResponse(QnaTagResource::make($tag)
+            ->response()
+            ->getData(true), 'Tag updated successfully');
+    }
+
+    public function deleteTag(QnaTag $tag)
+    {
+        $tag->delete();
+        return $this->sendResponse([], 'Tag deleted successfully');
+    }
+
 }

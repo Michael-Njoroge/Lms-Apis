@@ -16,7 +16,7 @@ class IsBoth
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if($user->role !== 'admin' && $user->role !== 'instructor'){
+        if($user->role->role_name !== 'admin' && $user->role->role_name !== 'instructor'){
             return response()->json([
                 'status' => false,
                 'code' => 401,

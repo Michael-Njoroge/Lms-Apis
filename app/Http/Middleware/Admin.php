@@ -16,7 +16,7 @@ class Admin
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->user();
-        if($user->role !== 'admin'){
+        if($user->role->role_name !== 'admin'){
             return response()->json([
                 'status' => false,
                 'code' => 401,

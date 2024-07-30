@@ -184,6 +184,30 @@ class UsersController extends Controller
         } catch (Exception $error) {
             return $this->sendError($error->getMessage(), 500);
         }
-        }
+    }
+
+    public function assignRole(Request $request, User $user)
+    {
+        $data = $request->validate([
+            'role_id' => 'required|uuid|exists:roles,id'
+        ]);
+
+        $user->role_id = $data['role_id'];
+        $user->save();
+
+        return $this->sendResponse(UsersResource::make($user)
+            ->response()
+            ->getData(true),'Role assigned successfully');
+    }
+
+    public function removeRole(User $user)
+    {
+        $user->role_id = null;
+        $user->save();
+
+        return $this->sendResponse(UsersResource::make($user)
+            ->response()
+            ->getData(true), 'Role removed successfully');
+    }
 }
    

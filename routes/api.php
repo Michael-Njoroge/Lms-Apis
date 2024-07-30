@@ -23,7 +23,8 @@ use App\Http\Controllers\{
     ProjectCategoryController,
     ProjectController,
     SessionController,
-    QNAController
+    QNAController,
+    RoleController
 };
 
 //////////////////////////////////////Open Routes////////////////////////////////
@@ -231,6 +232,15 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::post('tags', [QNAController::class, 'createTag']);
     Route::put('tags/{tag}', [QNAController::class, 'updateTag']);
     Route::delete('tags/{tag}', [QNAController::class, 'deleteTag']);
+
+    // Role Routes
+    Route::put('assign-role/{user}', [UsersController::class, 'assignRole']);
+    Route::put('remove-role/{user}', [UsersController::class, 'removeRole']);
+    Route::post('roles', [RoleController::class, 'createRole'])->middleware('limit:20,15');
+    Route::get('roles', [RoleController::class, 'getRoles'])->middleware('limit:20,15');
+    Route::get('roles/{role}', [RoleController::class, 'getARole'])->middleware('limit:20,15');
+    Route::put('roles/{role}', [RoleController::class, 'updateRole'])->middleware('limit:20,15');
+    Route::delete('roles/{role}', [RoleController::class, 'deleteRole'])->middleware('limit:20,15');
 });
 
 ///////////////////////////////////Private Instructor Routes//////////////////////////////////////////

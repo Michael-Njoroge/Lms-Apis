@@ -38,8 +38,8 @@ return new class extends Migration
         Schema::create('qna_votes', function(Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignUuid('question_id')->nullable()->constrained('questions')->onDelete('set null');
-            $table->foreignUuid('answer_id')->nullable()->constrained('answers')->onDelete('set null');
+            $table->foreignUuid('question_id')->nullable()->constrained('questions')->onDelete('cascade');
+            $table->foreignUuid('answer_id')->nullable()->constrained('answers')->onDelete('cascade');
             $table->enum('vote_type', ['up_vote', 'down_vote']);
             $table->timestamps();
         });
@@ -62,8 +62,8 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignUuid('user_id')->constrained('users')->onDelete('cascade');
             $table->text('comment');
-            $table->foreignUuid('question_id')->nullable()->constrained('questions')->onDelete('set null');
-            $table->foreignUuid('answer_id')->nullable()->constrained('answers')->onDelete('set null');
+            $table->foreignUuid('question_id')->nullable()->constrained('questions')->onDelete('cascade');
+            $table->foreignUuid('answer_id')->nullable()->constrained('answers')->onDelete('cascade');
             $table->timestamps();
         });
 

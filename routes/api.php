@@ -87,6 +87,10 @@ Route::middleware(['throttle:global'])->group(function() {
     // Tag Routes
     Route::get('tags', [QNAController::class, 'getAllTags']);
     Route::get('tags/{tag}', [QNAController::class, 'getATag']);
+
+    // Qna Comment Routes
+    Route::get('get-comments', [QNAController::class, 'getAllComments']);
+    Route::get('get-comments/{comment}', [QNAController::class, 'getAComment']);
 });
 
 //////////////////////////////////////Private User Routes///////////////////////////////////////
@@ -130,14 +134,17 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::post('sessions', [SessionController::class, 'bookSession']);
 
     // Qna Session Routes
-    Route::post('post-question', [QNAController::class, 'createPost']);
-    Route::post('post-answer/{post}', [QNAController::class, 'createAnswer']);
-    Route::put('posts/{post}', [QNAController::class, 'updatePost']);
-    Route::delete('posts/{post}', [QNAController::class, 'deletePost']);
+    Route::post('post-question', [QNAController::class, 'createPost'])->middleware('limit:20,30');
+    Route::post('post-answer/{post}', [QNAController::class, 'createAnswer'])->middleware('limit:10,30');
+    Route::put('posts/{post}', [QNAController::class, 'updatePost'])->middleware('limit:10,30');
+    Route::delete('posts/{post}', [QNAController::class, 'deletePost'])->middleware('limit:10,30');
 
      // Qna Comment Routes
-    Route::post('post-comments/{post}', [QNAController::class, 'postComment']);
-    Route::delete('post-comments/{post}', [QNAController::class, 'deleteComment']);
+    Route::post('post-comments', [QNAController::class, 'postComment'])->middleware('limit:5,30');
+    Route::delete('delete-comments', [QNAController::class, 'deleteComment'])->middleware('limit:5,30');
+
+    // Qna Vote Routes
+    Route::post('post-votes', [QNAController::class, 'castVote'])->middleware('limit:5,30');
 
 });
 

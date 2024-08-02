@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UsersResource;
 use App\Mail\ResetPassword;
 use Illuminate\Support\Facades\Mail;
@@ -42,21 +43,25 @@ class UsersController extends Controller
     {
         $data = $request->validate([
             'email' => 'required|email|exists:users,email',
-            'password' => 'required|string'
+            'password' => 'required|string',
+            'remember' => 'boolean'
         ]);
 
         $user = User::where('email', $data['email'])->first();
 
-        if (!$user && Hash::check($data['password'], $user->password)) {
+        if (!$user || !Hash::check($data['password'], $user->password)) {
             return $this->sendError("Invalid Credentials");
         }
+
+        $remember = $data['remember'] ?? false;
+
+        Auth::login($user, $remember);
 
         $token = $user->createToken("access_token")->plainTextToken;
 
         return response()->json([
             'success' => true,
-            'data' => 
-            [
+            'data' => [
                 'id' => $user->id,
                 'firstname' => $user->firstname,
                 'lastname' => $user->lastname,
@@ -67,9 +72,16 @@ class UsersController extends Controller
                 'username' => strtolower($user->firstname . $user->lastname),
                 'profile' => $user->user_image,
             ],
-            'message' => 'Logged in successfully',
+            'message' => 'Welcome back!',
         ]);
+    }
 
+
+    public function logOut()
+    {
+        $user = auth()->user();
+        $user->tokens()->delete();
+        return $this->sendResponse([],'Logged out successfully');
     }
 
     public function getUsers()

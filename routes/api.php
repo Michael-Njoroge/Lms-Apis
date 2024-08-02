@@ -97,6 +97,7 @@ Route::middleware(['throttle:global'])->group(function() {
 //////////////////////////////////////Private User Routes///////////////////////////////////////
 Route::middleware(['auth:sanctum','active'])->group(function () {
     // User Routes
+    Route::post('logout', [UsersController::class, 'logOut']);
     Route::get('users/{user}', [UsersController::class, 'getUser']);
     Route::put('users/update/password', [UsersController::class, 'updatePassword']);
 

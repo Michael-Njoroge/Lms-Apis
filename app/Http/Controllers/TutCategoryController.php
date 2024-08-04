@@ -21,7 +21,7 @@ class TutCategoryController extends Controller
         $createdTut = TutCategory::findOrFail($tut->id);
         return $this->sendResponse(TutCategoryResource::make($createdTut)
             ->response()
-            ->getData(true),'Tutorial category created successfully');
+            ->getData(true),'Created successfully');
     }
 
     public function getAllTutCategories()
@@ -29,14 +29,14 @@ class TutCategoryController extends Controller
         $tutorialCategories = TutCategory::paginate(20);
         return $this->sendResponse(TutCategoryResource::collection($tutorialCategories)
             ->response()
-            ->getData(true),'Tutorial categories retrieved successfully');
+            ->getData(true),'Retrieved successfully');
     }
 
     public function getATutCategory(TutCategory $tutorial)
     {
         return $this->sendResponse(TutCategoryResource::make($tutorial)
             ->response()
-            ->getData(true),'Tutorial category retrieved successfully');
+            ->getData(true),'Retrieved successfully');
     }
 
     public function updateTutCategory(TutCategory $tutorial, Request $request)
@@ -50,12 +50,12 @@ class TutCategoryController extends Controller
         $updatedTutorial = TutCategory::findOrFail($tutorial->id);
         return $this->sendResponse(TutCategoryResource::make($updatedTutorial)
             ->response()
-            ->getData(true),'Tutorial category updated successfully');
+            ->getData(true),'Updated successfully');
     }
 
      public function deleteTutCategory(TutCategory $tutorial)
     {
         $tutorial->delete();
-        return $this->sendResponse([],'Tutorial category deleted successfully');
+        return $this->sendResponse([],'Deleted successfully');
     }
 }

@@ -20,8 +20,8 @@ class QnaCommentResource extends JsonResource
             'question' => new QuestionResource($this->whenLoaded('question')),
             'answer' => new AnswerResource($this->whenLoaded('answer')),
             'comment' => $this->comment,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ], function ($value) {
             return !is_null($value);
         });

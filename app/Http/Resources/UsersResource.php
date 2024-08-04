@@ -23,6 +23,8 @@ class UsersResource extends JsonResource
             'username' => strtolower($this->firstname . $this->lastname),
             'image' => $this->user_image,
             'role' => $this->role,
+            'is_blocked' => (bool) $this->is_blocked,
+            'status' => $this->status,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

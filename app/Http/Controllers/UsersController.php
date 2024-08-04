@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\UsersResource;
 use App\Mail\ResetPassword;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use App\Models\PasswordReset;
 use Carbon\Carbon;
@@ -27,15 +28,17 @@ class UsersController extends Controller
             'password' => 'required|string',
         ]);
 
+        $data['status'] = 'pending';
         $rawPassword = $data['password'];
         $data['password'] = Hash::make($rawPassword);
 
         $user = User::create($data);
+        event(new Registered($user));
         $createdUser = User::findOrFail($user->id);
 
         return $this->sendResponse(UsersResource::make($createdUser)
             ->response()
-            ->getData(true),'User created successfully');
+            ->getData(true), 'User created successfully. Please verify your email.');
         
     }
 
@@ -123,6 +126,20 @@ class UsersController extends Controller
         return $this->sendResponse(UsersResource::make($user)
             ->response()
             ->getData(true), $message);
+    }
+
+    public function changeUserStatus(Request $request, User $user)
+    {
+        $data = $request->validate([
+            'status' => 'required|in:active, inactive, banned'
+        ]);
+
+        $user->status = $data['status'];
+        $user->save();
+
+        return $this->sendResponse(UsersResource::make($user)
+            ->response()
+            ->getData(true), "User status updated to {$user->status}");
     }
 
     public function updatePassword(Request $request)

@@ -22,8 +22,8 @@ class TutorialResource extends JsonResource
             'keywords' => !empty($this->keywords) ? $this->keywords : null,
             'category_slug' => $this->whenLoaded('tutCategory') ? $this->tutCategory->slug : null,
             'content' => $this->content,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ], function ($value) {
             return !is_null($value);
         });

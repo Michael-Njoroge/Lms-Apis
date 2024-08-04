@@ -24,7 +24,8 @@ use App\Http\Controllers\{
     ProjectController,
     SessionController,
     QNAController,
-    RoleController
+    RoleController,
+    EmailVerifyController
 };
 
 //////////////////////////////////////Open Routes////////////////////////////////
@@ -100,6 +101,8 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::post('logout', [UsersController::class, 'logOut']);
     Route::get('users/{user}', [UsersController::class, 'getUser']);
     Route::put('users/update/password', [UsersController::class, 'updatePassword']);
+    Route::get('/email/verify/{id}/{hash}', [EmailVerifyController::class, 'verify'])->name('verification.verify');
+    Route::post('/email/resend', [EmailVerifyController::class, 'resend'])->name('verification.resend');
 
     // Tutorial Category Routes
     Route::get('tutorial/category', [TutCategoryController::class, 'getAllTutCategories']);
@@ -157,6 +160,7 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     Route::put('users/{user}', [UsersController::class, 'updateUser']);
     Route::put('users/block/unblock/{user}', [UsersController::class, 'blockUnblockUser']);
     Route::delete('users/{user}', [UsersController::class, 'deleteUser']);
+    Route::post('users/status/{user}', [UsersController::class, 'changeUserStatus']);
 
     // Tutorial Routes
     Route::post('tutorials', [TutorialController::class, 'postTutorial'])->middleware('limit:100,60');

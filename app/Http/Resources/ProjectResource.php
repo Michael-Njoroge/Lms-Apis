@@ -27,8 +27,8 @@ class ProjectResource extends JsonResource
             'images' => $this->images,
             'links' => $this->links,
             'category' => new ProjectCategoryResource($this->whenLoaded('projectCategory')),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ], function ($value) {
             return !is_null($value) && $value !== [];
         });

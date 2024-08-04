@@ -21,8 +21,8 @@ class LessonResource extends JsonResource
             'description' => $this->description,
             'video_url' => $this->video_url,
             'free_preview' => (bool) $this->free_preview,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
 }

@@ -158,7 +158,6 @@ Route::middleware(['auth:sanctum','active','admin'])->group(function(){
     // User Routes
     Route::get('users', [UsersController::class, 'getUsers']);
     Route::put('users/{user}', [UsersController::class, 'updateUser']);
-    Route::put('users/block/unblock/{user}', [UsersController::class, 'blockUnblockUser']);
     Route::delete('users/{user}', [UsersController::class, 'deleteUser']);
     Route::post('users/status/{user}', [UsersController::class, 'changeUserStatus']);
 

@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string('mobile')->nullable()->unique();
             $table->string('role')->default('user');
             $table->string('profession')->nullable();
-            $table->boolean('is_blocked')->default(false);
             $table->timestamps();
         });
 

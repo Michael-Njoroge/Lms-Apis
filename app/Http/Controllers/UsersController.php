@@ -117,21 +117,10 @@ class UsersController extends Controller
         return $this->sendResponse([],'User deleted successfully');
     }
 
-    public function blockUnblockUser(Request $request ,User $user)
-    {
-        $user->is_blocked = !$user->is_blocked;
-        $user->save();
-
-       $message = 'User was ' . ($user->is_blocked ? 'Blocked' : 'Unblocked');
-        return $this->sendResponse(UsersResource::make($user)
-            ->response()
-            ->getData(true), $message);
-    }
-
     public function changeUserStatus(Request $request, User $user)
     {
         $data = $request->validate([
-            'status' => 'required|in:active, inactive, banned'
+            'status' => 'required|in:active,inactive,banned',
         ]);
 
         $user->status = $data['status'];

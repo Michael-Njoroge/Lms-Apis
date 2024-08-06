@@ -38,7 +38,7 @@ class UsersController extends Controller
 
         return $this->sendResponse(UsersResource::make($createdUser)
             ->response()
-            ->getData(true), 'User created successfully. Please verify your email.');
+            ->getData(true), 'Please verify your email.');
         
     }
 
@@ -54,6 +54,10 @@ class UsersController extends Controller
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
             return $this->sendError("Invalid Credentials");
+        }
+
+        if (!$user->hasVerifiedEmail()) {
+            return $this->sendError("Email not verified.");
         }
 
         $remember = $data['remember'] ?? false;
@@ -167,7 +171,7 @@ class UsersController extends Controller
         $resetUrl = env('BASE_URL') . '/reset-password?email='.$user->email.'&token='.$token;
          Mail::to($user->email)->send(new ResetPassword($user,$resetUrl));
 
-        return $this->sendResponse([], "Please check your mail, we have sent a password reset link valid for the next 10 minutes" );
+        return $this->sendResponse([], "We have emailed you a password reset link valid for the next 10 minutes" );
     }
 
     public function resetPassword(Request $request)
@@ -192,7 +196,7 @@ class UsersController extends Controller
                     // Delete the token after successful password reset
                     $passwordReset->delete();
 
-                    return $this->sendResponse([], "Password reset successfully, please use the new password in your next login");
+                    return $this->sendResponse([], "Success, use the new password in your next login");
                 } else {
                     return $this->sendError("The reset token is invalid or has expired, please try again");
                 }

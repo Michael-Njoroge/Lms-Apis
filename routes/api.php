@@ -34,6 +34,9 @@ Route::post('register', [UsersController::class, 'registerUser']);
 Route::post('login', [UsersController::class, 'loginUser']);
 Route::post('forgot-password', [UsersController::class, 'forgotPassword']);
 Route::post('reset-password', [UsersController::class, 'resetPassword']);
+Route::post('/email/resend', [EmailVerifyController::class, 'resend'])->name('verification.resend');
+Route::get('/email/verify/{id}/{hash}', [EmailVerifyController::class, 'verify'])->name('verification.verify');
+
 
 // Google Auth Routes
 Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
@@ -101,8 +104,6 @@ Route::middleware(['auth:sanctum','active'])->group(function () {
     Route::post('logout', [UsersController::class, 'logOut']);
     Route::get('users/{user}', [UsersController::class, 'getUser']);
     Route::put('users/update/password', [UsersController::class, 'updatePassword']);
-    Route::get('/email/verify/{id}/{hash}', [EmailVerifyController::class, 'verify'])->name('verification.verify');
-    Route::post('/email/resend', [EmailVerifyController::class, 'resend'])->name('verification.resend');
 
     // Tutorial Category Routes
     Route::get('tutorial/category', [TutCategoryController::class, 'getAllTutCategories']);

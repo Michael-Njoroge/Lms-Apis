@@ -20,7 +20,7 @@ class TutorialResource extends JsonResource
             'slug' => $this->slug,
             'topic_name' => $this->topic_name,
             'keywords' => !empty($this->keywords) ? $this->keywords : null,
-            'category_slug' => $this->whenLoaded('tutCategory') ? $this->tutCategory->slug : null,
+            'category' => $this->whenLoaded('tutCategory') ? $this->tutCategory : null,
             'content' => $this->content,
             'created_at' => $this->created_at->toDateTimeString(),
             'updated_at' => $this->updated_at->toDateTimeString(),

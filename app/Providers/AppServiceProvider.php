@@ -34,8 +34,11 @@ class AppServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
         });
 
+
+
     VerifyEmail::createUrlUsing(function ($notifiable) {
-            return URL::temporarySignedRoute(
+            $baseUrl = rtrim(env('BASE_URL'), '/');
+            $signedUrl = URL::temporarySignedRoute(
                 'verification.verify',
                 now()->addMinutes(60),
                 [
@@ -43,6 +46,11 @@ class AppServiceProvider extends ServiceProvider
                     'hash' => sha1($notifiable->getEmailForVerification()),
                 ]
             );
+            $path = parse_url($signedUrl, PHP_URL_PATH);
+            $query = parse_url($signedUrl, PHP_URL_QUERY);
+            $id = $notifiable->getKey();
+            $hash = sha1($notifiable->getEmailForVerification());
+            return "{$baseUrl}/email-verification?id={$id}&hash={$hash}&{$query}";
     });
     }
 

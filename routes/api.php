@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\{
     UsersController,
-    GoogleController, 
+    SocialController, 
     TutCategoryController, 
     TutorialController, 
     NewsLetterController, 
@@ -38,9 +38,9 @@ Route::post('/email/resend', [EmailVerifyController::class, 'resend'])->name('ve
 Route::get('/email/verify/{id}/{hash}', [EmailVerifyController::class, 'verify'])->name('verification.verify');
 
 
-// Google Auth Routes
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle']);
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+// Social Auth Routes
+Route::get('redirect/{provider}', [SocialController::class, 'redirectToProvider']);
+Route::post('callback/{provider}', [SocialController::class, 'handleProviderCallback']);
 
 Route::middleware(['throttle:global'])->group(function() {
     // News Letter Routes

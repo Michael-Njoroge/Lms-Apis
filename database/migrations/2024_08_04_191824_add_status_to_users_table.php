@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('status')->default('pending');
+            $table->string('github_id')->nullable();
+            $table->string('linkedin_id')->nullable();
         });
     }
 
@@ -23,6 +25,8 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
            $table->dropColumn('status');
+            $table->dropColumn('github_id');
+            $table->dropColumn('linkedin_id');
         });
     }
 };

@@ -69,6 +69,15 @@ class UsersController extends Controller {
 			'login_at' => now(),
 		]);
 
+		$loginCount = LoginHistory::where('user_id', $user->id)->count();
+
+		if ($loginCount > 10) {
+			LoginHistory::where('user_id', $user->id)
+				->orderBy('login_at', 'asc')
+				->take($loginCount - 10)
+				->delete();
+		}
+
 		$token = $user->createToken("access_token")->plainTextToken;
 		return response()->json([
 			'success' => true,
@@ -89,7 +98,7 @@ class UsersController extends Controller {
 
 	public function getLoginHistory() {
 		$userId = auth()->id();
-		$loginHistory = LoginHistory::where('user_id', $userId)->orderBy('login_at', 'desc')->get();
+		$loginHistory = LoginHistory::with('user')->where('user_id', $userId)->orderBy('login_at', 'desc')->get();
 		return $this->sendResponse(LoginHistoryResource::collection($loginHistory)
 				->response()
 				->getData(true), 'Login history retrieved successfully');

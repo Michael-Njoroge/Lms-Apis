@@ -1,9 +1,7 @@
 <?php
 
 use App\Http\Controllers\BlogCategoryController;
-
 use App\Http\Controllers\BlogController;
-
 use App\Http\Controllers\ContactsController;
 use App\Http\Controllers\CourseCategoryController;
 use App\Http\Controllers\CourseController;
@@ -21,10 +19,12 @@ use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SocialController;
 use App\Http\Controllers\TutCategoryController;
 use App\Http\Controllers\TutorialController;
+use App\Http\Controllers\TwoFactorController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\VideoCategoryController;
 use App\Http\Controllers\VideosController;
-use App\Http\Controllers\WorkWithUsController;use Illuminate\Http\Request;use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\WorkWithUsController;
+use Illuminate\Support\Facades\Route;
 
 //////////////////////////////////////Open Routes////////////////////////////////
 // Auth Routes
@@ -102,6 +102,11 @@ Route::middleware(['auth:sanctum', 'active'])->group(function () {
 	Route::get('users/{user}', [UsersController::class, 'getUser']);
 	Route::put('users/update/password', [UsersController::class, 'updatePassword']);
 	Route::get('login/history', [UsersController::class, 'getLoginHistory']);
+
+	//2fa auth
+	Route::post('2fa/prepare', [TwoFactorController::class, 'prepareTwoFactor'])->name('2fa.prepare');
+	Route::post('2fa/confirm', [TwoFactorController::class, 'confirmTwoFactor'])->name('2fa.confirm');
+	Route::get('2fa/recovery-codes', [TwoFactorController::class, 'showRecoveryCodes'])->name('2fa.recovery.codes');
 
 	// Tutorial Category Routes
 	Route::get('tutorial/category', [TutCategoryController::class, 'getAllTutCategories']);

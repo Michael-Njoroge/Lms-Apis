@@ -13,10 +13,12 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Laragear\TwoFactor\Contracts\TwoFactorAuthenticatable;
+use Laragear\TwoFactor\TwoFactorAuthentication;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail {
-	use HasApiTokens, HasFactory, Notifiable, HasUuids;
+class User extends Authenticatable implements MustVerifyEmail, TwoFactorAuthenticatable {
+	use HasApiTokens, HasFactory, Notifiable, HasUuids, TwoFactorAuthentication;
 
 	/**
 	 * The attributes that are mass assignable.

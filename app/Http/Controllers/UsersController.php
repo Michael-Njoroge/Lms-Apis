@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Laragear\TwoFactor\Facades\Auth2FA;
 
 class UsersController extends Controller {
 	public function registerUser(Request $request) {
@@ -47,6 +48,7 @@ class UsersController extends Controller {
 			'email' => 'required|email|exists:users,email',
 			'password' => 'required|string',
 			'remember' => 'boolean',
+			'2fa_code' => 'sometimes|required|string',
 		]);
 
 		$user = User::where('email', $data['email'])->first();
@@ -59,8 +61,20 @@ class UsersController extends Controller {
 			return $this->sendError("Email not verified.");
 		}
 
-		$remember = $data['remember'] ?? false;
-		Auth::login($user, $remember);
+		if ($user->hasTwoFactorEnabled()) {
+			if (!$request->filled('2fa_code')) {
+				return response()->json([
+					'success' => false,
+					'message' => 'Two-factor authentication code is required.',
+				], 403);
+			}
+
+			if (!Auth2FA::attempt($request->user(), $data['2fa_code'])) {
+				return response()->json(['success' => false, 'message' => 'Invalid two-factor authentication code.'], 401);
+			}
+		} else {
+			Auth::login($user, $data['remember'] ?? false);
+		}
 
 		LoginHistory::create([
 			'user_id' => $user->id,

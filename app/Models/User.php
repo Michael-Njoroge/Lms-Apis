@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
+use App\Mail\VerificationCodeMail;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\PasswordReset;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,13 +12,15 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laragear\TwoFactor\Contracts\TwoFactorAuthenticatable;
 use Laragear\TwoFactor\TwoFactorAuthentication;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements MustVerifyEmail, TwoFactorAuthenticatable {
+class User extends Authenticatable implements TwoFactorAuthenticatable {
 	use HasApiTokens, HasFactory, Notifiable, HasUuids, TwoFactorAuthentication;
 
 	/**
@@ -96,5 +99,24 @@ class User extends Authenticatable implements MustVerifyEmail, TwoFactorAuthenti
 
 	public function loginHistories() {
 		return $this->hasMany(LoginHistory::class);
+	}
+
+	public function requiresVerification() {
+		return $this->verification_code;
+	}
+
+	public function sendVerificationCode() {
+		$code = rand(100000, 999999);
+		Cache::put("verification_code_{$this->id}", $code, now()->addMinutes(10));
+		Mail::to($this->email)->send(new VerificationCodeMail($this, $code));
+	}
+
+	public function validateVerificationCode($code) {
+		$storedCode = Cache::get("verification_code_{$this->id}");
+		if ($storedCode && $storedCode == $code) {
+			Cache::forget("verification_code_{$this->id}");
+			return true;
+		}
+		return false;
 	}
 }

@@ -49,6 +49,7 @@ class UsersController extends Controller {
 			'password' => 'required|string',
 			'remember' => 'boolean',
 			'2fa_code' => 'sometimes|required|string',
+			'verification_code' => 'sometimes|required|string',
 		]);
 
 		$user = User::where('email', $data['email'])->first();
@@ -57,10 +58,22 @@ class UsersController extends Controller {
 			return $this->sendError("Invalid Credentials");
 		}
 
-		if (!$user->hasVerifiedEmail()) {
-			return $this->sendError("Email not verified.");
+		// Send the verification code unconditionally
+		if (!$request->filled('verification_code')) {
+			$user->sendVerificationCode();
+
+			return response()->json([
+				'success' => false,
+				'message' => 'Verification code sent.',
+			], 403);
 		}
 
+		// Validate the verification code
+		if (!$user->validateVerificationCode($data['verification_code'])) {
+			return response()->json(['success' => false, 'message' => 'Invalid verification code.'], 401);
+		}
+
+		// Handle two-factor authentication
 		if ($user->hasTwoFactorEnabled()) {
 			if (!$request->filled('2fa_code')) {
 				return response()->json([
@@ -69,13 +82,15 @@ class UsersController extends Controller {
 				], 403);
 			}
 
-			if (!Auth2FA::attempt($request->user(), $data['2fa_code'])) {
+			if (!Auth2FA::attempt($user, $data['2fa_code'])) {
 				return response()->json(['success' => false, 'message' => 'Invalid two-factor authentication code.'], 401);
 			}
-		} else {
-			Auth::login($user, $data['remember'] ?? false);
 		}
 
+		// Log the user in
+		Auth::login($user, $data['remember'] ?? false);
+
+		// Record login history
 		LoginHistory::create([
 			'user_id' => $user->id,
 			'ip_address' => $request->ip(),
@@ -83,6 +98,7 @@ class UsersController extends Controller {
 			'login_at' => now(),
 		]);
 
+		// Limit the login history to the latest 10 entries
 		$loginCount = LoginHistory::where('user_id', $user->id)->count();
 
 		if ($loginCount > 10) {
@@ -92,7 +108,9 @@ class UsersController extends Controller {
 				->delete();
 		}
 
+		// Generate access token
 		$token = $user->createToken("access_token")->plainTextToken;
+
 		return response()->json([
 			'success' => true,
 			'data' => [
